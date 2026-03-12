@@ -172,8 +172,8 @@ class OpenAIAnalyzer:
         parsed = self._parse_json_response(content)
         return self._normalize_text_result(parsed)
 
-    def analyze_images(self, image_bytes_list: List[bytes]) -> Dict[str, Any]:
-        if not image_bytes_list:
+    def analyze_images(self, image_payloads: List[Dict[str, Any]]) -> Dict[str, Any]:
+        if not image_payloads:
             return {}
         if self.client is None:
             raise RuntimeError("Не задан OPENAI_API_KEY в .env.")
@@ -197,8 +197,12 @@ class OpenAIAnalyzer:
             }
         ]
 
-        for image_bytes in image_bytes_list:
-            data_url = self._to_data_url(image_bytes)
+        for image_payload in image_payloads:
+            image_bytes = image_payload.get("bytes", b"")
+            content_type = image_payload.get("content_type", "image/jpeg")
+            if not image_bytes:
+                continue
+            data_url = self._to_data_url(image_bytes, content_type)
             content.append(
                 {
                     "type": "image_url",
@@ -224,9 +228,10 @@ class OpenAIAnalyzer:
         parsed = self._parse_json_response(message_text)
         return self._normalize_image_result(parsed)
 
-    def _to_data_url(self, image_bytes: bytes) -> str:
+    def _to_data_url(self, image_bytes: bytes, content_type: str) -> str:
         encoded = base64.b64encode(image_bytes).decode("utf-8")
-        return "data:image/jpeg;base64," + encoded
+        safe_content_type = content_type if content_type.startswith("image/") else "image/jpeg"
+        return "data:" + safe_content_type + ";base64," + encoded
 
     def _parse_json_response(self, content: str) -> Dict[str, Any]:
         candidates = [content, self._strip_code_fence(content), self._extract_json_object(content)]

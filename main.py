@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse
@@ -75,14 +75,19 @@ async def analyze(
             warning_messages.append("Не удалось получить анализ текста от OpenAI.")
 
     if uploaded_images:
-        image_bytes_list = []
+        image_payloads = []
         for image in uploaded_images:
             image_bytes = await image.read()
             if image_bytes:
-                image_bytes_list.append(image_bytes)
-        if image_bytes_list:
+                image_payloads.append(
+                    {
+                        "content_type": image.content_type or "image/jpeg",
+                        "bytes": image_bytes,
+                    }
+                )
+        if image_payloads:
             try:
-                image_analysis = openai_analyzer.analyze_images(image_bytes_list)
+                image_analysis = openai_analyzer.analyze_images(image_payloads)
             except Exception:
                 warning_messages.append("Не удалось получить анализ изображений от OpenAI.")
 
