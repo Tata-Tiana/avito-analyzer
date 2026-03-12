@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат анализа</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <main class="page">
+        <section class="card">
+            <a href="/" class="back-link">← Новый анализ</a>
+            <p class="eyebrow">Результат</p>
+            <h1>Разбор конкурента</h1>
+
+            {% if warning_messages %}
+                {% for message in warning_messages %}
+                    <div class="warning-box">
+                        <strong>Внимание:</strong> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if error_message %}
+                <div class="error-box">
+                    <strong>Ошибка:</strong> {{ error_message }}
+                </div>
+            {% endif %}
+
+            <div class="result-sections">
+                <section class="result-section">
+                    <h2>Источник данных</h2>
+                    <div class="grid">
+                        <article class="panel">
+                            <h3>URL</h3>
+                            <p>{{ result.source_url or "данные не предоставлены" }}</p>
+                        </article>
+                        <article class="panel">
+                            <h3>Заголовок страницы</h3>
+                            <p>{{ result.parsed_title or "данные не предоставлены" }}</p>
+                        </article>
+                        <article class="panel">
+                            <h3>Цена</h3>
+                            <p>{{ result.parsed_price or "данные не предоставлены" }}</p>
+                        </article>
+                        <article class="panel panel-wide">
+                            <h3>Итоговый текст для анализа</h3>
+                            <pre>{{ result.final_text or "данные не предоставлены" }}</pre>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="result-section">
+                    <h2>Анализ текста</h2>
+                    {% if result.text_analysis %}
+                        <div class="grid">
+                            <article class="panel">
+                                <h3>Основная услуга</h3>
+                                <p>{{ result.text_analysis.main_service or "данные не предоставлены" }}</p>
+                            </article>
+                            <article class="panel">
+                                <h3>Дополнительные услуги</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.additional_services %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Цена</h3>
+                                <p>
+                                    {% if result.text_analysis.pricing %}
+                                        {{ result.text_analysis.pricing.price_text or "данные не предоставлены" }}
+                                    {% else %}
+                                        данные не предоставлены
+                                    {% endif %}
+                                </p>
+                                <p class="muted-text">
+                                    {% if result.text_analysis.pricing %}
+                                        {{ result.text_analysis.pricing.pricing_model or "" }}
+                                    {% endif %}
+                                </p>
+                            </article>
+                            <article class="panel">
+                                <h3>Преимущества</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.advantages %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Триггеры</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.marketing_triggers %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Слабые места</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.weaknesses %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Стиль</h3>
+                                <p>{{ result.text_analysis.style or "данные не предоставлены" }}</p>
+                            </article>
+                            <article class="panel">
+                                <h3>Целевая аудитория</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.target_audience %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel panel-wide">
+                                <h3>Резюме</h3>
+                                <p>{{ result.text_analysis.summary or "данные не предоставлены" }}</p>
+                            </article>
+                            <article class="panel panel-wide">
+                                <h3>Рекомендации</h3>
+                                <ul>
+                                    {% for item in result.text_analysis.recommendations %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                        </div>
+                    {% else %}
+                        <div class="panel">
+                            <p>данные не предоставлены</p>
+                        </div>
+                    {% endif %}
+                </section>
+
+                <section class="result-section">
+                    <h2>Анализ изображений</h2>
+                    {% if result.image_analysis %}
+                        <div class="grid">
+                            <article class="panel">
+                                <h3>Что увидела модель</h3>
+                                <ul>
+                                    {% for item in result.image_analysis.detected_objects %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Стадия ремонта</h3>
+                                <p>{{ result.image_analysis.repair_stage or "данные не предоставлены" }}</p>
+                            </article>
+                            <article class="panel">
+                                <h3>Виды работ</h3>
+                                <ul>
+                                    {% for item in result.image_analysis.work_types %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Качество визуала</h3>
+                                <p>{{ result.image_analysis.visual_quality or "данные не предоставлены" }}</p>
+                            </article>
+                            <article class="panel">
+                                <h3>Сигналы доверия</h3>
+                                <ul>
+                                    {% for item in result.image_analysis.trust_signals %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel">
+                                <h3>Слабые места фото</h3>
+                                <ul>
+                                    {% for item in result.image_analysis.image_weaknesses %}
+                                        <li>{{ item }}</li>
+                                    {% else %}
+                                        <li>данные не предоставлены</li>
+                                    {% endfor %}
+                                </ul>
+                            </article>
+                            <article class="panel panel-wide">
+                                <h3>Вывод по изображениям</h3>
+                                <p>{{ result.image_analysis.image_summary or "данные не предоставлены" }}</p>
+                            </article>
+                        </div>
+                    {% else %}
+                        <div class="panel">
+                            <p>данные не предоставлены</p>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

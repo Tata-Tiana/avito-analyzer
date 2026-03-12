@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avito Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <main class="page">
+        <section class="card hero">
+            <p class="eyebrow">Local MVP</p>
+            <h1>Анализатор конкурентов в ремонте квартир</h1>
+            <p class="subtitle">
+                Передайте сайт конкурента, вставьте текст объявления или загрузите фотографии.
+                Сервис соберет данные и подготовит маркетинговый разбор.
+            </p>
+
+            <form action="/analyze" method="post" enctype="multipart/form-data" class="analyze-form">
+                <div class="form-section">
+                    <label for="url">Ссылка на страницу конкурента</label>
+                    <input
+                        id="url"
+                        type="text"
+                        name="url"
+                        placeholder="https://..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="form-section">
+                    <label for="raw_text">Текст объявления</label>
+                    <textarea
+                        id="raw_text"
+                        name="raw_text"
+                        rows="10"
+                        placeholder="Вставьте текст объявления вручную"
+                    ></textarea>
+                </div>
+
+                <div class="form-section upload-section">
+                    <label for="images">Фотографии или скриншоты объявления</label>
+                    <input
+                        id="images"
+                        type="file"
+                        name="images"
+                        multiple
+                        accept="image/*"
+                    >
+                    <p class="input-hint">
+                        Можно загрузить несколько фото, скриншотов или карточек до/после ремонта.
+                    </p>
+                </div>
+
+                <div class="progress-card" id="progress-card" aria-live="polite">
+                    <div class="progress-head">
+                        <span class="progress-title">Собираем данные конкурента</span>
+                        <span class="progress-percent" id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-status" id="progress-status">
+                        Ждем ссылку, текст или изображения.
+                    </p>
+                </div>
+
+                <button type="submit">Анализировать</button>
+            </form>
+
+            <div class="hint-box">
+                <p>Открытые сайты можно анализировать по URL.</p>
+                <p>Объявления Avito удобнее анализировать через текст и фото вручную.</p>
+            </div>
+        </section>
+    </main>
+    <script>
+        (function () {
+            var form = document.querySelector(".analyze-form");
+            var urlInput = document.getElementById("url");
+            var textInput = document.getElementById("raw_text");
+            var imageInput = document.getElementById("images");
+            var card = document.getElementById("progress-card");
+            var fill = document.getElementById("progress-fill");
+            var percent = document.getElementById("progress-percent");
+            var status = document.getElementById("progress-status");
+            var button = form.querySelector("button");
+            var timerId = null;
+            var steps = [
+                { value: 18, text: "Проверяем входные данные." },
+                { value: 36, text: "Забираем текст со страницы или из формы." },
+                { value: 58, text: "Нормализуем объявление для анализа." },
+                { value: 77, text: "Запрашиваем текстовый анализ у OpenAI." },
+                { value: 93, text: "Обрабатываем изображения и собираем результат." }
+            ];
+
+            function setProgress(value, text) {
+                fill.style.width = value + "%";
+                percent.textContent = value + "%";
+                status.textContent = text;
+            }
+
+            form.addEventListener("submit", function () {
+                if (!urlInput.value.trim() && !textInput.value.trim() && imageInput.files.length === 0) {
+                    status.textContent = "Нужно добавить хотя бы один источник данных.";
+                    card.classList.add("is-active");
+                    return;
+                }
+
+                card.classList.add("is-active");
+                button.disabled = true;
+                button.textContent = "Анализируем...";
+                setProgress(6, "Получили данные. Запускаем обработку.");
+
+                timerId = window.setInterval(function () {
+                    var nextStep = steps.shift();
+                    if (!nextStep) {
+                        window.clearInterval(timerId);
+                        setProgress(97, "Формируем итоговый отчет.");
+                        return;
+                    }
+                    setProgress(nextStep.value, nextStep.text);
+                }, 700);
+            });
+        }());
+    </script>
+</body>
+</html>

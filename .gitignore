@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Mac
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Uploads
+uploads/
+
+# Selenium / browser cache
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+
+# Node if ever used
+node_modules/
+
+# Build
+dist/
+build/
