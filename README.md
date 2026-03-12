@@ -1,13 +1,20 @@
-# Avito Analyzer
+# 🧠 AI Competitor Analyzer for Apartment Renovation
 
-AI-анализатор объявлений конкурентов в нише ремонта квартир.
+AI-powered tool for analyzing competitor ads in the apartment renovation market.
 
-Локальный веб-сервис на `FastAPI`, который умеет анализировать:
-- текст объявления
-- фотографии или скриншоты объявления
-- страницу открытого сайта конкурента по URL
+![Python](https://img.shields.io/badge/Python-3.9-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-web%20framework-green)
+![OpenAI](https://img.shields.io/badge/OpenAI-AI-orange)
+![Selenium](https://img.shields.io/badge/Selenium-browser%20automation-brightgreen)
+![License](https://img.shields.io/badge/license-educational-lightgrey)
 
-После анализа сервис формирует структурированный отчет по тексту и визуальной подаче.
+The service analyzes:
+
+- advertisement text
+- images from listings
+- competitor website pages
+
+and generates a structured marketing analysis.
 
 ## Возможности
 
