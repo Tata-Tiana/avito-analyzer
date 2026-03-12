@@ -100,8 +100,9 @@
                 status.textContent = text;
             }
 
-            form.addEventListener("submit", function () {
+            form.addEventListener("submit", function (event) {
                 if (!urlInput.value.trim() && !textInput.value.trim() && imageInput.files.length === 0) {
+                    event.preventDefault();
                     status.textContent = "Нужно добавить хотя бы один источник данных.";
                     card.classList.add("is-active");
                     return;
