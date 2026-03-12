@@ -168,6 +168,20 @@ http://127.0.0.1:8000
 - рекомендации по SEO
 - экспорт отчета
 
+## Скриншоты
+
+В проекте есть папка [`screenshots/`](/Users/tatanamedzidova/Desktop/Avito_analyzer/screenshots) с примерами интерфейса:
+- `screenshots/main_page.png`
+- `screenshots/analysis.png`
+
+Главная страница:
+
+![Главная страница](screenshots/main_page.png)
+
+Результат анализа:
+
+![Результат анализа](screenshots/analysis.png)
+
 ## Автор
 
 Учебный проект по анализу конкурентов в сфере ремонта квартир.
